@@ -1,4 +1,3 @@
-# streamlit_app.py
 import streamlit as st
 import pandas as pd
 import joblib
@@ -45,10 +44,10 @@ model, preprocessor = load_model_and_preprocessor()
 
 # --- OpenRouter API Utility Function ---
 @st.cache_data(show_spinner="⏳ Generating AI Reports... This may take a moment.")
-def call_openrouter_api(prompt_content, model_name="deepseek/deepseek-chat-v3-0324"):
+def call_openrouter_api(prompt_content, model_name="google/gemini-2.0-flash-001"):
     # Debug Statement 1: Confirm the API key is retrieved
     OPENROUTER_KEY_RAW = st.secrets.get("OPENROUTER_KEY")
-    st.info(f"DEBUG: Retrieved key from st.secrets. Is it None? {'Yes' if OPENROUTER_KEY_RAW is None else 'No'}")
+    
 
     if not OPENROUTER_KEY_RAW:
         st.error("❌ ERROR: OPENROUTER_KEY not configured. Please add it as a secret.")
@@ -57,15 +56,11 @@ def call_openrouter_api(prompt_content, model_name="deepseek/deepseek-chat-v3-03
     # Remove any potential leading/trailing whitespace
     OPENROUTER_KEY = OPENROUTER_KEY_RAW.strip()
 
-    # Debug Statement 2: Check the length of the retrieved key
-    st.info(f"DEBUG: Length of the API Key (after strip): {len(OPENROUTER_KEY)}")
-
+    
     # Construct the Authorization header
     auth_header = f"Bearer {OPENROUTER_KEY}"
     
-    # Debug Statement 3: Show the exact header being sent
-    st.info("DEBUG: Full Authorization Header being sent to OpenRouter:")
-    st.code(auth_header)
+  
 
     OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
@@ -74,10 +69,7 @@ def call_openrouter_api(prompt_content, model_name="deepseek/deepseek-chat-v3-03
         "Content-Type": "application/json",
     }
     
-    # Debug Statement 4: Confirm the URL and full headers
-    st.info(f"DEBUG: Requesting URL: {OPENROUTER_API_URL}")
-    st.write("DEBUG: Request Headers:")
-    st.json(headers)
+
 
     data = {
         "model": model_name,
@@ -86,9 +78,7 @@ def call_openrouter_api(prompt_content, model_name="deepseek/deepseek-chat-v3-03
         ]
     }
     
-    # Debug Statement 5: Show the JSON payload
-    st.write("DEBUG: Request Body (JSON payload):")
-    st.json(data)
+
     
     try:
         response = requests.post(OPENROUTER_API_URL, headers=headers, data=json.dumps(data))
