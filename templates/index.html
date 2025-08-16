@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Productivity Report Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        .upload-section {
+            background-color: #ecf0f1;
+            padding: 25px;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 30px;
+            border: 1px dashed #bdc3c7;
+        }
+        input[type="file"] {
+            display: block;
+            margin: 15px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .report-output {
+            background-color: #fdfdfd;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 6px;
+            /* Removed white-space: pre-wrap; to allow Markdown rendering */
+            word-wrap: break-word; /* Still good for long words */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Back to normal font */
+            font-size: 16px;
+            color: #444;
+            max-height: 70vh; /* Limit height */
+            overflow-y: auto; /* Enable scrolling for long reports */
+        }
+        .error-message {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .success-message {
+            color: #28a745;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none; /* Hidden by default */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏭 Factory Worker Productivity Report Generator</h1>
+
+        <div class="upload-section">
+            <p>Upload a CSV file containing worker data to generate a detailed productivity report.</p>
+            <form method="POST" enctype="multipart/form-data" onsubmit="showSpinner()">
+                <input type="file" name="file" accept=".csv" required>
+                <button type="submit">Generate Report</button>
+            </form>
+        </div>
+
+        <div class="loading-spinner" id="loadingSpinner"></div>
+
+        {% if error %}
+            <div class="error-message">{{ error }}</div>
+        {% elif overall_report and personalized_advice %}
+            <div class="success-message">Report generated successfully for "{{ filename }}"!</div>
+
+            <h2>Predicted Productivity Scores</h2>
+            <div class="report-output">
+                {{ predicted_scores_table | safe }}
+            </div>
+
+            <h2>Overall Productivity Report & Recommendations</h2>
+            <div class="report-output">
+                {{ overall_report | safe }} {# Use |safe filter to render HTML #}
+            </div>
+
+            <h2>Personalized Work Style & Optimization Coaching</h2>
+            <div class="report-output">
+                {{ personalized_advice | safe }} {# Use |safe filter to render HTML #}
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function showSpinner() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

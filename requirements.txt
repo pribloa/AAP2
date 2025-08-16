@@ -1,0 +1,9 @@
+pandas
+scikit-learn==1.6.1
+joblib
+requests==2.31.0
+python-dotenv==1.0.0
+numpy==2.0.2
+tabulate
+markdown==3.6  # Add this line
+streamlit
